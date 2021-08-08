@@ -1,0 +1,85 @@
+# Author: Jonathan Cruz
+# Creation Date: 8/8/21
+# Below is a list of imports I have used to help me create this program.
+ 
+
+
+
+
+import requests
+from tkinter import *
+import math
+import time
+
+# Here I have an introduction. 
+
+print("Welcome to My Weather App.")
+time.sleep(2)
+while True:
+    api_key = "ad174ffb26be5a45801f600f374550de"
+    city_n = input("Please type your city or zipcode: ")
+    country = ("US")
+    city = (f"{city_n}, {country}")
+
+# I've played around a lot with the url and response, (ex: moving them, putting them in a function), but this is the best way I was able to validate whether or not it would work. 
+
+    url = f"http://api.openweathermap.org/data/2.5/weather?q={city}&appid={api_key}"
+    response = requests.get(url).json()
+
+# Here if the user inputs the wrong information it will let them know as well as help to rectify the issue. 
+
+    if response['cod'] == ('404'):
+        print('\nPlease try again and double check to see if the location is in the US')
+        continue
+    # Below I have all the mathmatics being performed and I have wrapped them up in a function so it will be easier to call them. 
+    else:
+        def get_weather():
+            temp = response['main']['temp']
+            temp = math.floor((temp * 1.8) - 459.67)
+
+            feels_like = response['main']['feels_like']
+            feels_like = math.floor((feels_like * 1.8) - 459.67)
+
+            temp_max = response['main']['temp_max']
+            temp_max = math.floor((temp_max * 1.8) - 459.67)
+
+            temp_min = response['main']['temp_min']
+            temp_min = math.floor((temp_min * 1.8) - 459.67)
+                                            
+            humidity = response['main']['humidity']
+
+            # The return is to help organize the info for when I print the values from above. 
+                                
+            return {
+                'temp': temp,
+                'feels_like': feels_like,
+                'humidity': humidity,
+                'temp_max': temp_max,
+                'temp_min': temp_min,
+                }    
+
+
+        # I used \n so the info when displayed is easier to read. 
+        weather = get_weather()
+        print(f"\nThe temperature is {weather['temp']} degrees F.")
+        print(f"\nThe weather feels like {weather['feels_like']} degrees F.")
+        print(f"\nThe high for today will be {weather['temp_max']} degrees F.")
+        print(f"\nThe low for today will be {weather['temp_min']} degrees F.")
+        print(f"\nThe humidity is at {weather['humidity']} percent.")
+        
+        # I noticed how the pausing in the peer reveiew gave me a chance to view the material comfortably, before I put these in it felt jagged and uncomfortable. 
+
+        time.sleep(5) 
+        answer = str(input("\nWould you like to try again Yes or No: "))
+        if answer == 'no':
+            print("\nThank you for using my program!")
+            time.sleep(5)
+            break
+        elif answer == 'yes':
+            continue
+        else:
+            print("\nPlease type yes or no.")
+            breakpoint  
+
+
+# originally I encapsulated the whole program in a while loop just so I could ask if the user if they wanted to restart the program but I found it usefull in other parts as well.   
